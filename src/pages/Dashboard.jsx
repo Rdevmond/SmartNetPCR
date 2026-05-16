@@ -80,10 +80,10 @@ const Dashboard = () => {
     } else {
       data = Object.keys(BUILDING_CATEGORIES).map(cat => {
         const catReports = filteredMerged.filter(report => {
-          const loc = report.location || "";
-          if (cat === 'Gedung Utama') return loc.includes('GU') || loc.includes('Utama');
-          if (cat === 'Gedung Serba Guna') return loc.includes('GSG') || loc.includes('Serba Guna');
-          return BUILDING_CATEGORIES['Fasilitas Publik'].some(fLoc => loc.includes(fLoc));
+          const loc = (report.location || "").toLowerCase();
+          if (cat === 'Gedung Utama') return loc.includes('gu') || loc.includes('utama');
+          if (cat === 'Gedung Serba Guna') return loc.includes('gsg') || loc.includes('serba guna');
+          return BUILDING_CATEGORIES['Fasilitas Publik'].some(fLoc => loc.includes(fLoc.toLowerCase()));
         });
         return {
           name: cat,
@@ -197,7 +197,19 @@ const Dashboard = () => {
               bg: "bg-purple-500/10"
             },
             { label: "Rata-rata Speed", value: stats?.avgSpeed?.toFixed(1) || "0", sub: "Mbps (Filter)", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-            { label: "Skor Kepuasan", value: stats?.total > 0 && stats?.distribution ? ((stats.distribution.find(d => d.name === 'Baik')?.value || 0) + (stats.distribution.find(d => d.name === 'Cukup')?.value || 0)) / stats.total * 100 : 0, sub: "% Cukup & Baik", icon: Users, color: "text-amber-500", bg: "bg-amber-500/10", isPercent: true }
+            {
+              label: "Skor Kepuasan",
+              value: (() => {
+                const total = filteredMerged.length;
+                if (total === 0) return "0%";
+                const goodCount = filteredMerged.filter(r => r.label === 'Baik' || r.label === 'Cukup').length;
+                return `${((goodCount / total) * 100).toFixed(0)}%`;
+              })(),
+              sub: "% Cukup & Baik",
+              icon: Users,
+              color: "text-amber-500",
+              bg: "bg-amber-50"
+            }
           ].map((item, i) => (
             <div key={i} className="glass-card p-8 rounded-[2rem] border-white/50 hover-lift group">
               <div className="flex justify-between items-start mb-6">
@@ -281,15 +293,17 @@ const Dashboard = () => {
               </ResponsiveContainer>
             </div>
             <div className="space-y-4">
-              {stats.distribution.map((entry, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[entry.name] }}></div>
-                    <span className="text-[10px] font-black text-gray-400 uppercase">{entry.name}</span>
-                  </div>
-                  <span className="text-sm font-black text-[#003366]">{stats.total > 0 ? ((entry.value / stats.total) * 100).toFixed(1) : '0'}%</span>
-                </div>
-              ))}
+                  {stats.distribution.map((entry, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[entry.name] }}></div>
+                        <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{entry.name}</span>
+                      </div>
+                      <span className="text-sm font-black text-[#003366]">
+                        {filteredMerged.length > 0 ? ((entry.value / filteredMerged.length) * 100).toFixed(1) : 0}%
+                      </span>
+                    </div>
+                  ))}
             </div>
           </div>
         </div>
