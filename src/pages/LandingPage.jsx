@@ -48,16 +48,16 @@ const LandingPage = () => {
   return (
     <div className="bg-mesh min-h-screen pt-24 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      <section className="relative px-8 py-32">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-2 gap-20 items-center">
             <div className="space-y-10 animate-slide-up">
               <div className="inline-flex items-center px-4 py-2 rounded-2xl bg-blue-50/80 backdrop-blur-md border border-blue-100 text-[#003366] text-[10px] font-black uppercase tracking-widest">
                 <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-3 animate-pulse"></span>
                 Infrastruktur IT Terintegrasi
               </div>
               
-              <h1 className="text-6xl lg:text-8xl font-black text-[#003366] leading-[0.95] tracking-tighter">
+              <h1 className="text-8xl font-black text-[#003366] leading-[0.95] tracking-tighter">
                 Smart Campus <br />
                 <span className="text-gradient">Analytics.</span>
               </h1>
@@ -66,7 +66,7 @@ const LandingPage = () => {
                 Satu-satunya platform pemantauan jaringan di PCR yang menggunakan model <span className="text-[#003366] font-bold">Decision Tree</span> untuk diagnosa presisi dan real-time.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-5">
+              <div className="flex flex-row gap-5">
                 <Link
                   to="/predict"
                   className="px-8 py-5 bg-[#003366] text-white font-black rounded-2xl shadow-2xl shadow-blue-900/30 hover:bg-blue-800 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group btn-premium"
@@ -78,7 +78,7 @@ const LandingPage = () => {
                   to="/predict-manual"
                   className="px-8 py-5 bg-white text-[#003366] font-black rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:bg-gray-50 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
                 >
-                  Manual Check
+                  Precision Check
                   <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
@@ -164,7 +164,7 @@ const LandingPage = () => {
                </div>
 
                {/* Decorative floating badges */}
-               <div className="absolute -top-8 -left-8 glass-card p-5 rounded-2xl shadow-2xl animate-float hidden lg:flex items-center space-x-3 border-white/50">
+               <div className="absolute -top-8 -left-8 glass-card p-5 rounded-2xl shadow-2xl animate-float flex items-center space-x-3 border-white/50">
                   <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
                      <ShieldCheck size={20} />
                   </div>
@@ -180,8 +180,8 @@ const LandingPage = () => {
 
       {/* Tech Cards */}
       <section className="py-20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-8">
+           <div className="grid grid-cols-3 gap-8">
               {features.map((f, i) => (
                 <div key={i} className="group glass-card p-12 rounded-[3rem] border-white/50 hover:bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
                    <div className={`w-16 h-16 ${f.color} rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-blue-900/10 group-hover:scale-110 transition-transform`}>
@@ -201,31 +201,31 @@ const LandingPage = () => {
 
       {/* Large Stats Section */}
       <section className="py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-           <div className="bg-[#003366] rounded-[4rem] p-16 md:p-24 relative overflow-hidden shadow-2xl">
+        <div className="max-w-7xl mx-auto px-8 text-center">
+           <div className="bg-[#003366] rounded-[4rem] p-24 relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.3),transparent)]"></div>
               <div className="relative z-10 space-y-16">
-                 <div className="max-w-2xl mx-auto">
-                    <h3 className="text-3xl md:text-5xl font-black text-white mb-6">Data Adalah <span className="text-blue-400">Kekuatan Kami.</span></h3>
-                    <p className="text-blue-200 font-medium">NetCheck menggunakan agregasi data ribuan pengguna untuk memetakan infrastruktur digital PCR dengan presisi tanpa tanding.</p>
-                 </div>
-                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-                    {[
-                       { val: stats.total, label: "Total Reports", sub: "Hari Ini", color: "text-[#FFD700]" },
-                       { val: "13+", label: "Gedung Terpantau", sub: "Seluruh Kampus", color: "text-white" },
-                       { val: "99.2%", label: "Decision Tree Accuracy", sub: "Validated Data", color: "text-blue-400" },
-                       { val: "0.8s", label: "Analysis Time", sub: "Instant Result", color: "text-white" }
-                    ].map((s, i) => (
-                       <div key={i} className="space-y-2">
-                          <p className={`text-4xl md:text-6xl font-black ${s.color} tracking-tighter`}>{s.val}</p>
-                          <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest">{s.label}</p>
-                          <p className="text-[10px] text-blue-400/60 font-bold uppercase">{s.sub}</p>
-                       </div>
-                    ))}
-                 </div>
-              </div>
-           </div>
-        </div>
+                  <div className="max-w-2xl mx-auto">
+                     <h1 className="text-5xl font-black text-white mb-6">Data Adalah <span className="text-blue-400">Kekuatan Kami.</span></h1>
+                     <p className="text-blue-200 font-medium">NetCheck menggunakan agregasi data ribuan pengguna untuk memetakan infrastruktur digital PCR dengan presisi tanpa tanding.</p>
+                  </div>
+                  <div className="grid grid-cols-4 gap-12">
+                     {[
+                        { val: stats.total, label: "Total Reports", sub: "Hari Ini", color: "text-[#FFD700]" },
+                        { val: "14", label: "Lokasi Terpantau", sub: "Seluruh Kampus", color: "text-white" },
+                        { val: "99.2%", label: "Decision Tree Accuracy", sub: "Validated Data", color: "text-blue-400" },
+                        { val: "0.8s", label: "Analysis Time", sub: "Instant Result", color: "text-white" }
+                     ].map((s, i) => (
+                        <div key={i} className="space-y-2">
+                           <p className={`text-6xl font-black ${s.color} tracking-tighter`}>{s.val}</p>
+                           <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest">{s.label}</p>
+                           <p className="text-[10px] text-blue-400/60 font-bold uppercase">{s.sub}</p>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+            </div>
+         </div>
       </section>
       
       <div className="h-32"></div>

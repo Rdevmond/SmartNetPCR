@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, User, Wifi, MapPin, Zap, Globe, PlayCircle, Video, MessageCircle, Gamepad2, DownloadCloud, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
+import { Activity, Wifi, MapPin, Zap, Globe, PlayCircle, Video, MessageCircle, Gamepad2, DownloadCloud, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 import { ACTIVITIES, COMPLAINTS, predictQuality } from '../utils/decisionLogic';
 import { BUILDING_CATEGORIES } from '../utils/constants';
 import { dbService } from '../services/dbService';
@@ -8,7 +8,7 @@ import { dbService } from '../services/dbService';
 const PredictForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    name: 'Guest User',
     building: 'Gedung Utama',
     location: 'Lt. 1 GU',
     activity: 'browsing',
@@ -45,36 +45,55 @@ const PredictForm = () => {
         setTestStage('finalizing');
         
         setTimeout(() => {
-          const prediction = predictQuality(speed, formData.activity, formData.complaint);
-          
+          // Smart Check: use 'none' complaint (neutral), no complaint influence on explanation
+          const prediction = predictQuality(speed, formData.activity, 'none');
+
+          // Build location-aware explanation (no mention of complaint)
+          const locBad = locReports.filter(r => r.label === 'Buruk' || r.label === 'Sangat Buruk').length;
+          const badPct = locReports.length > 0 ? Math.round((locBad / locReports.length) * 100) : 0;
+          const actLabel = ACTIVITIES[formData.activity]?.label || formData.activity;
+
+          let smartExplanation;
+          if (prediction.label === 'Sangat Buruk') {
+            smartExplanation = `Kecepatan rata-rata di ${formData.location} diestimasi hanya ${speed.toFixed(1)} Mbps — jauh di bawah kebutuhan ${actLabel}.${badPct > 0 ? ` ${badPct}% laporan dari area ini menunjukkan kualitas yang buruk.` : ''}`;
+          } else if (prediction.label === 'Buruk') {
+            smartExplanation = `Koneksi di ${formData.location} diestimasi ${speed.toFixed(1)} Mbps, kurang ideal untuk ${actLabel}.${badPct > 0 ? ` Sekitar ${badPct}% pengguna di area ini melaporkan kualitas kurang memuaskan.` : ''}`;
+          } else if (prediction.label === 'Cukup') {
+            smartExplanation = `Estimasi kecepatan di ${formData.location}: ${speed.toFixed(1)} Mbps. Mencukupi namun pas-pasan untuk ${actLabel}.`;
+          } else {
+            smartExplanation = `Koneksi di ${formData.location} diestimasi stabil di ${speed.toFixed(1)} Mbps — sangat cocok untuk ${actLabel}.`;
+          }
+
           const report = {
             ...formData,
             speed: speed,
             ...prediction,
+            explanation: smartExplanation, // override complaint-based explanation
+            isTransient: true,
             timestamp: new Date().toISOString()
           };
           
-          const savedReport = dbService.saveReport(report);
-          navigate(`/result/${savedReport.id}`);
+          // DO NOT SAVE TO DB for Smart Check
+          navigate(`/result/temp`, { state: { report } });
         }, 1000);
       }, 2000);
     }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-mesh pt-32 pb-20 px-4">
+    <div className="min-h-screen bg-mesh pt-32 pb-20 px-10">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16 animate-slide-up">
            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest border border-blue-100 mb-6">
-              AI Smart Diagnosis
+              AI Smart Diagnosis (Quick View)
            </div>
-          <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-6 tracking-tight">Cek <span className="text-gradient">Kualitas Jaringan</span></h1>
+          <h1 className="text-6xl font-black text-[#003366] mb-6 tracking-tight">Smart <span className="text-gradient">Check.</span></h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto font-medium">
-            Analisis cerdas berdasarkan lokasi spesifik Anda menggunakan data historis kampus.
+            Analisis instan kualitas jaringan berdasarkan lokasi tanpa menyimpan data ke log publik.
           </p>
         </div>
 
-        <div className="glass-card rounded-[3rem] p-8 md:p-16 shadow-2xl border-white/50 animate-fade-in delay-200">
+        <div className="glass-card rounded-[3rem] p-16 shadow-2xl border-white/50 animate-fade-in delay-200">
           {isSubmitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center space-y-8 animate-pulse">
                <div className="relative">
@@ -96,24 +115,9 @@ const PredictForm = () => {
             </div>
           ) : (
           <form onSubmit={handleSubmit} className="space-y-12">
-            {/* Nama Input */}
-            <div className="space-y-4">
-               <label className="text-sm font-black text-[#003366] uppercase tracking-widest flex items-center">
-                 <User className="w-4 h-4 mr-3 text-blue-500" />
-                 Nama Anda
-               </label>
-               <input
-                 type="text"
-                 required
-                 placeholder="Masukkan nama untuk laporan"
-                 className="w-full px-6 py-5 bg-white/50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-bold text-gray-800"
-                 value={formData.name}
-                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-               />
-            </div>
-
+            
             {/* Hierarchical Location */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-10">
                <div className="space-y-4">
                   <label className="text-sm font-black text-[#003366] uppercase tracking-widest flex items-center">
                     <MapPin className="w-4 h-4 mr-3 text-blue-500" />
@@ -158,7 +162,7 @@ const PredictForm = () => {
                   <Zap className="w-4 h-4 mr-3 text-yellow-500" />
                   Apa Tujuan Anda Menggunakan Internet?
                </label>
-               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+               <div className="grid grid-cols-6 gap-4">
                   {[
                     { key: 'browsing', icon: Globe, color: 'text-blue-500' },
                     { key: 'streaming', icon: PlayCircle, color: 'text-red-500' },
@@ -191,7 +195,7 @@ const PredictForm = () => {
               type="submit"
               className="w-full py-6 bg-[#003366] text-white font-black text-lg rounded-3xl shadow-2xl shadow-blue-900/20 hover:bg-blue-800 transition-all transform hover:-translate-y-1 flex items-center justify-center group btn-premium"
             >
-              Mulai Analisis & Speed Test
+              Mulai Smart Check
               <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </button>
           </form>

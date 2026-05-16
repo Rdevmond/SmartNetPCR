@@ -27,7 +27,6 @@ const PredictManual = () => {
     };
     
     const savedReport = dbService.saveReport(report);
-    // Navigate to result page (we'll create this or use a shared result view)
     navigate(`/result/${savedReport.id}`);
   };
 
@@ -36,15 +35,15 @@ const PredictManual = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16 animate-slide-up">
            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-widest border border-purple-100 mb-6">
-              Manual Diagnosis Mode
+              Precision Diagnosis Mode
            </div>
-          <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-6 tracking-tight">Input <span className="text-gradient">Parameter Riil</span></h1>
+          <h1 className="text-6xl font-black text-[#003366] mb-6 tracking-tight">Precision <span className="text-gradient">Check.</span></h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto font-medium">
             Masukkan kondisi jaringan yang Anda rasakan saat ini untuk mendapatkan diagnosis instan dari sistem.
           </p>
         </div>
 
-        <div className="glass-card rounded-[3rem] p-8 md:p-16 shadow-2xl border-white/50 animate-fade-in delay-200">
+        <div className="glass-card rounded-[3rem] p-16 shadow-2xl border-white/50 animate-fade-in delay-200">
           <form onSubmit={handleSubmit} className="space-y-12">
             {/* Nama Input */}
             <div className="space-y-4">
@@ -63,7 +62,7 @@ const PredictManual = () => {
             </div>
 
             {/* Lokasi Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-10">
                <div className="space-y-4">
                   <label className="text-sm font-black text-[#003366] uppercase tracking-widest flex items-center">
                     <MapPin className="w-4 h-4 mr-3 text-blue-500" />
@@ -108,7 +107,7 @@ const PredictManual = () => {
                  <Zap className="w-4 h-4 mr-3 text-yellow-500" />
                  Berapa Kecepatan Internet Anda?
                </label>
-               <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+               <div className="grid grid-cols-5 gap-4">
                   {SPEEDS.map((speed) => (
                     <div 
                       key={speed.value}
@@ -133,7 +132,7 @@ const PredictManual = () => {
                   <Globe className="w-4 h-4 mr-3 text-blue-500" />
                   Apa Tujuan Anda Menggunakan Internet?
                </label>
-               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+               <div className="grid grid-cols-6 gap-4">
                   {[
                     { key: 'browsing', icon: Globe, color: 'text-blue-500' },
                     { key: 'streaming', icon: PlayCircle, color: 'text-red-500' },
@@ -168,7 +167,7 @@ const PredictManual = () => {
                 <AlertCircle className="w-4 h-4 mr-3 text-blue-500" />
                 Ada Kendala yang Dirasakan?
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-2 gap-5">
                 {Object.entries(COMPLAINTS).map(([key, data]) => (
                   <div 
                     key={key}

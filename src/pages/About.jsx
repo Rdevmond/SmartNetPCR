@@ -3,9 +3,9 @@ import { Mail, Globe, Code, Users, Award, Database, Code2, Sparkles, ShieldCheck
 
 const About = () => {
   const team = [
-    { name: "Ketua Proyek", role: "UI/UX & Logic Architect", color: "text-blue-500", bg: "bg-blue-50" },
-    { name: "Anggota 1", role: "Backend & Data Service", color: "text-purple-500", bg: "bg-purple-50" },
-    { name: "Anggota 2", role: "Frontend Developer", color: "text-emerald-500", bg: "bg-emerald-50" },
+    { name: "Elen Fransiska", role: "Project Manager", color: "text-blue-500", bg: "bg-blue-50" },
+    { name: "Meira & Nabila", role: "System Researchers", color: "text-purple-500", bg: "bg-purple-50" },
+    { name: "Raymond", role: "System Maker", color: "text-emerald-500", bg: "bg-emerald-50" },
   ];
 
   return (
@@ -25,15 +25,15 @@ const About = () => {
              </div>
           </div>
 
-          <div className="pt-24 px-10 md:px-16 pb-16">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
+          <div className="pt-24 px-16 pb-16">
+            <div className="flex flex-row justify-between items-start gap-8 mb-12">
                <div className="space-y-4 max-w-2xl">
-                  <h1 className="text-4xl md:text-5xl font-black text-[#003366] tracking-tight">Visi & <span className="text-gradient">Misi Kami</span></h1>
+                  <h1 className="text-5xl font-black text-[#003366] tracking-tight">Visi & <span className="text-gradient">Misi Kami</span></h1>
                   <p className="text-lg text-gray-500 leading-relaxed font-medium">
                     NetCheck PCR lahir dari kebutuhan akan transparansi infrastruktur digital di lingkungan kampus. Kami percaya bahwa setiap pengguna berhak mendapatkan koneksi yang layak untuk menunjang aktivitas akademik.
                   </p>
                </div>
-               <div className="hidden lg:block">
+               <div className="block">
                   <div className="px-6 py-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center space-x-3">
                      <ShieldCheck className="text-blue-500 w-6 h-6" />
                      <span className="text-xs font-black text-blue-900 uppercase tracking-widest">Verified Academic Project</span>
@@ -41,7 +41,7 @@ const About = () => {
                </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-10">
               <div className="p-8 bg-gray-50/50 rounded-[2rem] border border-gray-100 group hover:bg-white hover:shadow-xl transition-all duration-500">
                 <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
                    <Database size={24} />
@@ -70,10 +70,9 @@ const About = () => {
           </div>
         </div>
 
-        {/* Team Section */}
         <div className="mb-20 animate-fade-in delay-300">
           <h2 className="text-3xl font-black text-[#003366] text-center mb-12 tracking-tight">The Creative Minds</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8">
             {team.map((member, i) => (
               <div key={i} className="glass-card p-10 rounded-[2.5rem] text-center border-white/50 hover-lift group">
                 <div className={`w-24 h-24 ${member.bg} rounded-full mx-auto mb-6 flex items-center justify-center text-gray-300 border-4 border-white shadow-inner group-hover:scale-110 transition-transform`}>
