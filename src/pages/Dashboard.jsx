@@ -47,7 +47,14 @@ const Dashboard = () => {
     };
   }, [allReports, statsData, selectedBuilding, selectedFloor, searchTerm]);
 
-  const stats = useMemo(() => dbService.getStats(filteredMerged), [filteredMerged]);
+  const stats = useMemo(() => {
+    const mergedStats = dbService.getStats(filteredMerged);
+    const dynamicStats = dbService.getStats(filteredDynamic);
+    return {
+      ...mergedStats,
+      total: dynamicStats.total // Gunakan total dari inputan saja
+    };
+  }, [filteredMerged, filteredDynamic]);
 
   // 2. Adaptive Chart Data
   const chartData = useMemo(() => {

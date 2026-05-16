@@ -14,9 +14,14 @@ const LandingPage = () => {
 
    useEffect(() => {
       const fetchStats = async () => {
-         const { mergedData } = await dbService.getDashboardData();
-         const newStats = dbService.getStats(mergedData);
-         setStats(newStats);
+         const { dynamicOnly, mergedData } = await dbService.getDashboardData();
+         const mergedStats = dbService.getStats(mergedData);
+         const dynamicStats = dbService.getStats(dynamicOnly);
+         
+         setStats({
+            ...mergedStats,
+            total: dynamicStats.total // Overwrite total with only dynamic count
+         });
          setIsLoading(false);
       };
       fetchStats();
