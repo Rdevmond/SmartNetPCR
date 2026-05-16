@@ -16,11 +16,11 @@ const Predictprecision = () => {
     location: 'Lt. 1 GU'
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const prediction = predictQuality(formData.speed, formData.activity, formData.complaint);
     const report = { ...formData, ...prediction, timestamp: new Date().toISOString() };
-    const savedReport = dbService.saveReport(report);
+    const savedReport = await dbService.saveReport(report);
     navigate(`/result/${savedReport.id}`);
   };
 
@@ -41,8 +41,8 @@ const Predictprecision = () => {
             Precision Diagnosis Mode
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-4 md:mb-6 tracking-tight">Precision <span className="text-gradient">Check.</span></h1>
-          <p className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-medium">
-            Masukkan kondisi jaringan yang Anda rasakan saat ini untuk mendapatkan diagnosis instan dari sistem.
+          <p className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed">
+            Dapatkan diagnosis akurat sekaligus <span className="text-emerald-600 font-bold">berkontribusi</span> pada database komunitas. Laporan Anda akan membantu pemetaan sinyal seluruh kampus secara presisi.
           </p>
         </div>
 

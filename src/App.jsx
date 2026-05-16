@@ -24,7 +24,10 @@ const PageLoader = () => (
 
 function App() {
   useEffect(() => {
-    dbService.init();
+    const initDb = async () => {
+      await dbService.init();
+    };
+    initDb();
   }, []);
 
   return (

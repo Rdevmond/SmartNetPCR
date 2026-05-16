@@ -12,43 +12,50 @@ const Dashboard = () => {
   const [selectedFloor, setSelectedFloor] = useState('Semua Lantai/Area');
   const [sortBy, setSortBy] = useState('popularitas');
   const [allReports, setAllReports] = useState([]);
+  const [statsData, setStatsData] = useState([]);
 
   useEffect(() => {
-    setAllReports(dbService.getReports());
+    const fetchDashboardData = async () => {
+      const { dynamicOnly, mergedData } = await dbService.getDashboardData();
+      setAllReports(dynamicOnly); // Untuk tabel transaksi
+      setStatsData(mergedData);   // Untuk grafik/statistik
+    };
+    fetchDashboardData();
   }, []);
 
   const itemsPerPage = 10;
 
   // 1. Adaptive Filtering
-  const filteredData = useMemo(() => {
-    return allReports.filter(report => {
+  const { filteredDynamic, filteredMerged } = useMemo(() => {
+    const filterFn = (report) => {
       if (!report.location) return false;
-
       const buildingMatch = selectedBuilding === 'Semua Gedung' ||
         (selectedBuilding === 'Gedung Utama' && report.location.includes('GU')) ||
         (selectedBuilding === 'Gedung Serba Guna' && report.location.includes('GSG')) ||
         (selectedBuilding === 'Fasilitas Publik' && BUILDING_CATEGORIES['Fasilitas Publik'].some(loc => report.location.includes(loc)));
-
       const floorMatch = selectedFloor === 'Semua Lantai/Area' || report.location === selectedFloor;
-
       const searchMatch = !searchTerm ||
         report.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.label?.toLowerCase().includes(searchTerm.toLowerCase());
-
       return buildingMatch && floorMatch && searchMatch;
-    });
-  }, [allReports, selectedBuilding, selectedFloor, searchTerm]);
+    };
 
-  const stats = useMemo(() => dbService.getStats(filteredData), [filteredData]);
+    return {
+      filteredDynamic: allReports.filter(filterFn),
+      filteredMerged: statsData.filter(filterFn)
+    };
+  }, [allReports, statsData, selectedBuilding, selectedFloor, searchTerm]);
+
+  const stats = useMemo(() => dbService.getStats(filteredMerged), [filteredMerged]);
 
   // 2. Adaptive Chart Data
   const chartData = useMemo(() => {
     let data = [];
     if (selectedFloor !== 'Semua Lantai/Area') {
-      const activities = [...new Set(filteredData.map(r => r.activity))];
+      const activities = [...new Set(filteredMerged.map(r => r.activity))];
       data = activities.map(act => {
-        const actReports = filteredData.filter(r => r.activity === act);
+        const actReports = filteredMerged.filter(r => r.activity === act);
         return {
           name: ACTIVITIES[act]?.label?.split('(')[0] || act,
           total: actReports.length,
@@ -65,7 +72,7 @@ const Dashboard = () => {
       }));
     } else {
       data = Object.keys(BUILDING_CATEGORIES).map(cat => {
-        const catReports = allReports.filter(report => {
+        const catReports = filteredMerged.filter(report => {
           const loc = report.location || "";
           if (cat === 'Gedung Utama') return loc.includes('GU') || loc.includes('Utama');
           if (cat === 'Gedung Serba Guna') return loc.includes('GSG') || loc.includes('Serba Guna');
@@ -88,13 +95,13 @@ const Dashboard = () => {
       if (sortBy === 'terburuk') return ((b.buruk + b.sangatBuruk) / (b.total || 1)) - ((a.buruk + a.sangatBuruk) / (a.total || 1));
       return 0;
     });
-  }, [selectedBuilding, selectedFloor, filteredData, stats.locationAnalysis, allReports, sortBy]);
+  }, [selectedBuilding, selectedFloor, filteredMerged, stats.locationAnalysis, sortBy]);
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredDynamic.length / itemsPerPage);
   const paginatedReports = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return filteredData.slice(start, start + itemsPerPage);
-  }, [filteredData, currentPage]);
+    return filteredDynamic.slice(start, start + itemsPerPage);
+  }, [filteredDynamic, currentPage]);
 
   const availableFloors = selectedBuilding === 'Semua Gedung' ? [] : BUILDING_CATEGORIES[selectedBuilding] || [];
 
@@ -149,7 +156,7 @@ const Dashboard = () => {
             {
               label: "Status Dominan",
               value: (() => {
-                if (!filteredData.length || !stats?.distribution?.length) {
+                if (!filteredMerged.length || !stats?.distribution?.length) {
                   return "N/A";
                 }
 
@@ -158,7 +165,7 @@ const Dashboard = () => {
                   .sort((a, b) => b.value - a.value)[0].name;
 
                 // Ambil data dengan label itu
-                const dominantReports = filteredData.filter(
+                const dominantReports = filteredMerged.filter(
                   r => r.label === dominantLabel
                 );
 

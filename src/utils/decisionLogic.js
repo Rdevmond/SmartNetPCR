@@ -67,12 +67,15 @@ export const predictQuality = (mbps, activityKey, complaintKey) => {
   if (skor <= -0.5) {
     result.label = "Sangat Buruk";
     result.color = "#ef4444";
-    result.explanation = `Skor Anda (${skor.toFixed(2)}) menunjukkan gangguan parah. Kecepatan terdeteksi (${mbps} Mbps) jauh di bawah kebutuhan ${activity.label}.`;
+    result.explanation = `Skor Anda (${skor.toFixed(2)}) menunjukkan gangguan parah. Kecepatan terdeteksi (${mbps} Mbps) jauh di bawah standar minimum untuk ${activity.label}.`;
     result.recommendation = "Gunakan koneksi alternatif atau lapor ke BSTI PCR jika ini area publik.";
   } else if (skor <= 1.5) {
     result.label = "Buruk";
     result.color = "#f97316";
-    result.explanation = `Skor Anda (${skor.toFixed(2)}) tergolong buruk. Keluhan "${complaint.label}" sangat mempengaruhi pengalaman ${activity.label}.`;
+    const impactText = complaintKey === 'none' 
+      ? `Keterbatasan kecepatan (${mbps} Mbps) adalah faktor utama` 
+      : `Keluhan "${complaint.label}" serta kecepatan yang rendah`;
+    result.explanation = `Skor Anda (${skor.toFixed(2)}) tergolong buruk. ${impactText} sangat mempengaruhi pengalaman ${activity.label}.`;
     result.recommendation = "Coba pindah ke area dengan sinyal lebih kuat (Gedung Utama/Perpustakaan).";
   } else if (skor <= 2.5 || surplus <= 0.5) {
     result.label = "Cukup";

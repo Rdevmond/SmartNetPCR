@@ -11,23 +11,26 @@ const PredictResult = () => {
   const isTransient = id === 'temp';
 
   useEffect(() => {
-    if (isTransient) {
-      const stateReport = location.state?.report;
-      if (stateReport) {
-        setReport(stateReport);
-        const rec = dbService.getRecommendation(stateReport.location);
-        setRecommendation(rec);
+    const loadData = async () => {
+      const allReports = await dbService.getMergedData();
+      if (isTransient) {
+        const stateReport = location.state?.report;
+        if (stateReport) {
+          setReport(stateReport);
+          const rec = dbService.getRecommendation(stateReport.location, allReports);
+          setRecommendation(rec);
+        }
+      } else {
+        const found = allReports.find(r => r.id === parseInt(id));
+        if (found) {
+          setReport(found);
+          const rec = dbService.getRecommendation(found.location, allReports);
+          setRecommendation(rec);
+        }
       }
-    } else {
-      const allReports = dbService.getReports();
-      const found = allReports.find(r => r.id === parseInt(id));
-      if (found) {
-        setReport(found);
-        const rec = dbService.getRecommendation(found.location);
-        setRecommendation(rec);
-      }
-    }
-  }, [id, location.state]);
+    };
+    loadData();
+  }, [id, location.state, isTransient]);
 
   if (!report) {
     return (
@@ -43,12 +46,30 @@ const PredictResult = () => {
     <div className="min-h-screen bg-mesh pt-24 md:pt-32 pb-20 px-4 md:px-10">
       <div className="max-w-4xl mx-auto animate-slide-up">
 
-        {isTransient && (
-          <div className="mb-6 flex items-start gap-3 px-5 py-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800">
-            <BookmarkX className="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5" />
-            <p className="text-sm font-bold">
-              <span className="font-black">Mode Smart Check:</span> Hasil ini bersifat sementara dan tidak tersimpan di database. Gunakan <Link to="/predict-precision" className="underline text-amber-700 hover:text-amber-900">precision Check</Link> jika ingin menyimpan laporan.
-            </p>
+        {/* Notifikasi Cerdas */}
+        {isTransient ? (
+          <div className="mb-8 flex items-center gap-4 px-6 py-5 bg-amber-50/80 backdrop-blur-md border border-amber-200 rounded-[2rem] text-amber-900 animate-fade-in shadow-lg shadow-amber-900/5">
+            <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
+              <BookmarkX className="w-6 h-6 text-white" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase tracking-widest text-amber-600">Mode Smart Check (Mode Tamu)</p>
+              <p className="text-sm font-medium leading-relaxed">
+                Hasil ini <span className="font-black">tidak akan disimpan</span> di database. Jika Anda ingin berkontribusi membantu mahasiswa lain memetakan sinyal, silakan gunakan <Link to="/predict-precision" className="font-black underline decoration-2 underline-offset-4 hover:text-amber-600 transition-colors">Precision Check</Link>.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-8 flex items-center gap-4 px-6 py-5 bg-emerald-50/80 backdrop-blur-md border border-emerald-200 rounded-[2rem] text-emerald-900 animate-fade-in shadow-lg shadow-emerald-900/5">
+            <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
+              <CheckCircle2 className="w-6 h-6 text-white" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase tracking-widest text-emerald-600">Terima Kasih Atas Kontribusi Anda!</p>
+              <p className="text-sm font-medium leading-relaxed">
+                Laporan ini telah <span className="font-black">berhasil disimpan</span>. Data Anda sangat berharga bagi komunitas PCR untuk memetakan kualitas infrastruktur digital kampus secara presisi.
+              </p>
+            </div>
           </div>
         )}
 
@@ -65,11 +86,6 @@ const PredictResult = () => {
               <p className="text-blue-200 font-medium text-sm md:text-base">
                 {isTransient ? `Analisis area: ${report.location}` : `Analisis untuk ${report.name} di ${report.location}`}
               </p>
-              {!isTransient && (
-                <span className="inline-flex items-center mt-3 px-4 py-1.5 bg-emerald-500/20 border border-emerald-400/30 rounded-xl text-emerald-300 text-[10px] font-black uppercase tracking-widest">
-                  <CheckCircle2 className="w-3 h-3 mr-2" /> Tersimpan di Database
-                </span>
-              )}
             </div>
           </div>
 

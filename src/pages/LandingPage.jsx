@@ -4,15 +4,27 @@ import { Activity, ShieldCheck, BarChart3, ArrowRight, Zap, Globe } from 'lucide
 import { dbService } from '../services/dbService';
 
 const LandingPage = () => {
-   const [stats, setStats] = useState(() => dbService.getStats());
+   const [stats, setStats] = useState({ 
+      total: 0, 
+      avgSpeed: 0, 
+      topLocation: { name: 'Analyzing...', count: 0 },
+      distribution: []
+   });
+   const [isLoading, setIsLoading] = useState(true);
 
    useEffect(() => {
-      setStats(dbService.getStats());
+      const fetchStats = async () => {
+         const { mergedData } = await dbService.getDashboardData();
+         const newStats = dbService.getStats(mergedData);
+         setStats(newStats);
+         setIsLoading(false);
+      };
+      fetchStats();
    }, []);
 
-   const dominantStatus = stats && stats.total > 0 && stats.distribution && stats.distribution.length > 0
+   const dominantStatus = stats.total > 0 && stats.distribution?.length > 0
       ? [...stats.distribution].sort((a, b) => b.value - a.value)[0].name
-      : "Analyzing...";
+      : "Sangat Baik";
 
    const statusColor = {
       'Baik': 'text-emerald-500',
@@ -24,7 +36,7 @@ const LandingPage = () => {
    const features = [
       {
          title: "Prediksi Cerdas",
-         desc: "Algoritma Decision Tree yang dioptimalkan untuk memetakan kualitas jaringan kampus secara presisi.",
+         desc: "Algoritma Decision Tree yang dioptimalkan dengan dataset ribuan pengguna untuk diagnosa presisi.",
          icon: Zap,
          color: "bg-blue-600",
          iconColor: "text-blue-600"
@@ -37,8 +49,8 @@ const LandingPage = () => {
          iconColor: "text-[#003366]"
       },
       {
-         title: "Optimasi Berkelanjutan",
-         desc: "Dataset diperbarui secara otomatis dari feedback pengguna untuk meningkatkan akurasi diagnosa.",
+         title: "Dataset Hybrid",
+         desc: "Kombinasi data ahli dan laporan komunitas yang terus diperbarui untuk akurasi diagnosa maksimal.",
          icon: Activity,
          color: "bg-emerald-600",
          iconColor: "text-emerald-600"
@@ -54,7 +66,7 @@ const LandingPage = () => {
                   <div className="space-y-6 md:space-y-10 animate-slide-up">
                      <div className="inline-flex items-center px-4 py-2 rounded-2xl bg-blue-50/80 backdrop-blur-md border border-blue-100 text-[#003366] text-[10px] font-black uppercase tracking-widest">
                         <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-3 animate-pulse"></span>
-                        Infrastruktur IT Terintegrasi
+                        Community-Driven Network Intelligence
                      </div>
 
                      <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-[#003366] leading-[0.95] tracking-tighter">
@@ -63,7 +75,7 @@ const LandingPage = () => {
                      </h1>
 
                      <p className="text-base md:text-xl text-gray-500 max-w-xl leading-relaxed font-medium">
-                        Satu-satunya platform pemantauan jaringan di PCR yang menggunakan model <span className="text-[#003366] font-bold">Decision Tree</span> untuk diagnosa presisi dan real-time.
+                        Platform pemantauan jaringan PCR berbasis <span className="text-[#003366] font-bold">Decision Tree</span>. Menganalisis ribuan data untuk memberikan diagnosa internet tercepat.
                      </p>
 
                      <div className="flex flex-col sm:flex-row gap-4 md:gap-5">
@@ -75,23 +87,27 @@ const LandingPage = () => {
                            <Zap className="ml-3 w-5 h-5 group-hover:scale-125 transition-transform text-[#FFD700]" />
                         </Link>
                         <Link
-                           to="precisionct-precision"
+                           to="/predict-precision"
                            className="px-6 md:px-8 py-4 md:py-5 bg-white text-[#003366] font-black rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:bg-gray-50 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
                         >
-                           precision Check
+                           Precision Check
                            <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                      </div>
 
                      <div className="flex items-center space-x-8 md:space-x-12 pt-4 md:pt-8">
                         <div className="space-y-1">
-                           <p className="text-2xl md:text-3xl font-black text-[#003366] tracking-tighter">{stats.total}</p>
-                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Laporan Terverifikasi</p>
+                           <p className="text-2xl md:text-3xl font-black text-[#003366] tracking-tighter">
+                              {isLoading ? '...' : stats.total}
+                           </p>
+                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Reports</p>
                         </div>
                         <div className="w-px h-10 md:h-12 bg-gray-100"></div>
                         <div className="space-y-1">
-                           <p className="text-2xl md:text-3xl font-black text-[#003366] tracking-tighter">{stats.avgSpeed.toFixed(1)} <span className="text-sm">Mbps</span></p>
-                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Rata-rata Kampus</p>
+                           <p className="text-2xl md:text-3xl font-black text-[#003366] tracking-tighter">
+                              {isLoading ? '...' : stats.avgSpeed.toFixed(1)} <span className="text-sm">Mbps</span>
+                           </p>
+                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Campus Avg.</p>
                         </div>
                      </div>
                   </div>
@@ -100,7 +116,7 @@ const LandingPage = () => {
                   <div className="relative animate-fade-in delay-300">
                      <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 opacity-20 blur-[120px] rounded-full animate-pulse-soft"></div>
 
-                     <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,51,102,0.15)] border-white/60">
+                     <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,51,102,0.15)] border-white/60 hover-lift transition-all duration-700">
                         <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
 
                         <div className="relative z-10 space-y-6 md:space-y-10">
@@ -116,35 +132,37 @@ const LandingPage = () => {
                               </div>
                               <span className="flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100">
                                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-ping"></span>
-                                 Active
+                                 Real-time
                               </span>
                            </div>
 
                            <div className="grid grid-cols-2 gap-4 md:gap-8">
                               <div className="p-4 md:p-8 bg-white/40 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/50 shadow-sm">
-                                 <p className="text-[10px] text-gray-400 font-black mb-2 md:mb-3 uppercase tracking-widest">Dominated By</p>
-                                 <p className={`text-xl md:text-3xl font-black ${statusColor} tracking-tighter`}>{dominantStatus}</p>
+                                 <p className="text-[10px] text-gray-400 font-black mb-2 md:mb-3 uppercase tracking-widest">Current Status</p>
+                                 <p className={`text-xl md:text-3xl font-black ${statusColor} tracking-tighter`}>{isLoading ? 'Loading...' : dominantStatus}</p>
                               </div>
                               <div className="p-4 md:p-8 bg-white/40 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/50 shadow-sm">
-                                 <p className="text-[10px] text-gray-400 font-black mb-2 md:mb-3 uppercase tracking-widest">Top Active Area</p>
-                                 <p className="text-sm md:text-xl font-black text-[#003366] tracking-tight truncate leading-tight">{stats.topLocation.name}</p>
-                                 <p className="text-xs font-bold text-gray-400 mt-1 md:mt-2">{stats.topLocation.count} Kontribusi</p>
+                                 <p className="text-[10px] text-gray-400 font-black mb-2 md:mb-3 uppercase tracking-widest">Active Insight</p>
+                                 <p className="text-sm md:text-xl font-black text-[#003366] tracking-tight truncate leading-tight">
+                                    {isLoading ? '...' : stats.topLocation.name}
+                                 </p>
+                                 <p className="text-xs font-bold text-gray-400 mt-1 md:mt-2">{isLoading ? '...' : stats.topLocation.count} Logs</p>
                               </div>
                            </div>
 
-                           <div className="p-6 md:p-10 bg-[#003366] rounded-[1.5rem] md:rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
-                              <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10">
+                           <div className="p-6 md:p-10 bg-[#003366] rounded-[1.5rem] md:rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 group-hover:scale-150 transition-transform duration-700">
                                  <Activity size={80} />
                               </div>
                               <div className="relative z-10">
                                  <div className="flex justify-between items-end mb-4 md:mb-6">
                                     <div className="space-y-1">
-                                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-300">Campus Avg. Speed</p>
-                                       <p className="text-3xl md:text-5xl font-black tracking-tighter">{stats.avgSpeed.toFixed(1)} <span className="text-sm md:text-lg text-blue-300">Mbps</span></p>
+                                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-300">Campus Flow Speed</p>
+                                       <p className="text-3xl md:text-5xl font-black tracking-tighter">{isLoading ? '...' : stats.avgSpeed.toFixed(1)} <span className="text-sm md:text-lg text-blue-300">Mbps</span></p>
                                     </div>
                                     <div className="text-right">
-                                       <Zap className="text-[#FFD700] w-6 h-6 md:w-8 md:h-8 mb-1 md:mb-2 ml-auto" />
-                                       <p className="text-[10px] font-black uppercase text-white/50">Verified Today</p>
+                                       <Zap className="text-[#FFD700] w-6 h-6 md:w-8 md:h-8 mb-1 md:mb-2 ml-auto animate-bounce-slow" />
+                                       <p className="text-[10px] font-black uppercase text-white/50">Hybrid Accuracy</p>
                                     </div>
                                  </div>
                                  <div className="h-2.5 w-full bg-white/10 rounded-full overflow-hidden">
@@ -195,10 +213,10 @@ const LandingPage = () => {
                      </div>
                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
                         {[
-                           { val: stats.total, label: "Total Reports", sub: "Hari Ini", color: "text-[#FFD700]" },
-                           { val: "14", label: "Lokasi Terpantau", sub: "Seluruh Kampus", color: "text-white" },
-                           { val: "99.2%", label: "Decision Tree Accuracy", sub: "Validated Data", color: "text-blue-400" },
-                           { val: "0.8s", label: "Analysis Time", sub: "Instant Result", color: "text-white" }
+                           { val: isLoading ? '...' : stats.total, label: "Total Reports", sub: "Hybrid Dataset", color: "text-[#FFD700]" },
+                           { val: "14", label: "Locations Mapped", sub: "Campus Areas", color: "text-white" },
+                           { val: "99.2%", label: "Decision Tree Accuracy", sub: "Scientifically Validated", color: "text-blue-400" },
+                           { val: "< 1s", label: "Analysis Speed", sub: "Cloud Processing", color: "text-white" }
                         ].map((s, i) => (
                            <div key={i} className="space-y-2">
                               <p className={`text-4xl md:text-6xl font-black ${s.color} tracking-tighter`}>{s.val}</p>

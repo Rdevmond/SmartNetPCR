@@ -19,19 +19,22 @@ const PredictForm = () => {
   const [simulatedSpeed, setSimulatedSpeed] = useState(0);
   const [testStage, setTestStage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setTestStage('connecting');
     
+    // Fetch merged data for simulation logic
+    const reports = await dbService.getMergedData();
+    
     setTimeout(() => {
       setTestStage('testing');
       
-      const reports = dbService.getReports();
-      const locReports = reports.filter(r => r.location === formData.location);
+      const cleanFormLoc = dbService.normalizeLocation(formData.location);
+      const locReports = reports.filter(r => dbService.normalizeLocation(r.location) === cleanFormLoc);
       const avgSpeed = locReports.length > 0 
         ? locReports.reduce((acc, r) => acc + (parseFloat(r.speed) || 0), 0) / locReports.length 
-        : 10;
+        : 15; // Default bit higher for guest simulation
       
       const speed = +(avgSpeed * (0.8 + Math.random() * 0.4)).toFixed(2);
       setSimulatedSpeed(speed);
@@ -89,8 +92,8 @@ const PredictForm = () => {
               AI Smart Diagnosis (Quick View)
            </div>
           <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-4 md:mb-6 tracking-tight">Smart <span className="text-gradient">Check.</span></h1>
-          <p className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-medium">
-            Analisis instan kualitas jaringan berdasarkan lokasi tanpa menyimpan data ke log publik.
+          <p className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed">
+            Analisis instan kualitas jaringan berdasarkan lokasi. <span className="text-amber-600 font-bold">Hasil tidak akan disimpan</span> ke database publik. Gunakan fitur ini jika Anda hanya ingin pengecekan cepat tanpa berkontribusi.
           </p>
         </div>
 
