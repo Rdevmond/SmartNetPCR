@@ -28,15 +28,23 @@ const Dashboard = () => {
   // 1. Adaptive Filtering
   const { filteredDynamic, filteredMerged } = useMemo(() => {
     const filterFn = (report) => {
-      if (!report.location) return false;
+      const loc = (report.location || "").toLowerCase();
+      
       const buildingMatch = selectedBuilding === 'Semua Gedung' ||
-        (selectedBuilding === 'Gedung Utama' && report.location.includes('GU')) ||
-        (selectedBuilding === 'Gedung Serba Guna' && report.location.includes('GSG')) ||
-        (selectedBuilding === 'Fasilitas Publik' && BUILDING_CATEGORIES['Fasilitas Publik'].some(loc => report.location.includes(loc)));
-      const floorMatch = selectedFloor === 'Semua Lantai/Area' || report.location === selectedFloor;
+        (selectedBuilding === 'Gedung Utama' && (loc.includes('gu') || loc.includes('utama'))) ||
+        (selectedBuilding === 'Gedung Serba Guna' && (loc.includes('gsg') || loc.includes('serba guna'))) ||
+        (selectedBuilding === 'Fasilitas Publik' && BUILDING_CATEGORIES['Fasilitas Publik'].some(fLoc => loc.includes(fLoc.toLowerCase())));
+
+      const cleanLoc = loc.replace(/\./g, '').replace(/\s+/g, ' ').trim();
+      const cleanFloor = selectedFloor.toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
+
+      const floorMatch = selectedFloor === 'Semua Lantai/Area' || 
+        cleanLoc.includes(cleanFloor) ||
+        loc.includes(selectedFloor.toLowerCase());
+
       const searchMatch = !searchTerm ||
         report.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        loc.includes(searchTerm.toLowerCase()) ||
         report.label?.toLowerCase().includes(searchTerm.toLowerCase());
       return buildingMatch && floorMatch && searchMatch;
     };

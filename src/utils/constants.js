@@ -1,6 +1,6 @@
 export const BUILDING_CATEGORIES = {
-  'Gedung Utama': ['Lt. 1 GU', 'Lt. 2 GU', 'Lt. 3 GU'],
-  'Gedung Serba Guna': ['Lt. 1 GSG', 'Lt. 2 GSG', 'Lt. 3 GSG'],
+   'Gedung Utama': ['Lt. 1 Gu', 'Lt. 2 Gu', 'Lt. 3 Gu'],
+  'Gedung Serba Guna': ['Lt. 1 Gsg', 'Lt. 2 Gsg', 'Lt. 3 Gsg'],
   'Fasilitas Publik': [
     'Kantin', 
     'Masjid', 
