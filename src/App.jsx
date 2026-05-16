@@ -6,7 +6,7 @@ import { dbService } from './services/dbService';
 // Lazy load pages for performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const PredictForm = lazy(() => import('./pages/PredictForm'));
-const Predictprecision = lazy(() => import('./pages/Predictprecision'));
+const Predictprecision = lazy(() => import('./pages/PredictPrecision'));
 const PredictResult = lazy(() => import('./pages/PredictResult'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DecisionTree = lazy(() => import('./pages/DecisionTree'));
