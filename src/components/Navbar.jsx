@@ -21,7 +21,7 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/predict', label: 'Smart Check', icon: Zap },
-    { path: '/predict-manual', label: 'Precision Check', icon: Activity },
+    { path: '/predict-precision', label: 'precision Check', icon: Activity },
     { path: '/tree', label: 'Alur Keputusan', icon: GitBranch },
     { path: '/about', label: 'Tentang', icon: ShieldCheck },
   ];
@@ -31,9 +31,8 @@ const Navbar = () => {
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-2 px-4 md:py-4 md:px-10' : 'py-4 px-4 md:py-8 md:px-10'}`}>
       <nav className="max-w-7xl mx-auto">
-        <div className={`glass-nav rounded-2xl md:rounded-[2rem] px-5 md:px-10 py-3 md:py-4 flex items-center justify-between transition-all duration-500 ${
-          isScrolled ? 'shadow-2xl border-white/40' : 'border-transparent shadow-none'
-        }`}>
+        <div className={`glass-nav rounded-2xl md:rounded-[2rem] px-5 md:px-10 py-3 md:py-4 flex items-center justify-between transition-all duration-500 ${isScrolled ? 'shadow-2xl border-white/40' : 'border-transparent shadow-none'
+          }`}>
           {/* Logo */}
           <Link to="/" className="flex items-center group">
             <div className="w-9 h-9 md:w-10 md:h-10 bg-[#003366] rounded-xl flex items-center justify-center text-white mr-2 md:mr-3 shadow-lg group-hover:rotate-12 transition-transform">
@@ -51,11 +50,10 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 lg:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center group ${
-                  isActive(item.path)
-                    ? 'bg-[#003366] text-white shadow-lg'
-                    : 'text-gray-500 hover:text-[#003366] hover:bg-blue-50'
-                }`}
+                className={`px-4 lg:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center group ${isActive(item.path)
+                  ? 'bg-[#003366] text-white shadow-lg'
+                  : 'text-gray-500 hover:text-[#003366] hover:bg-blue-50'
+                  }`}
               >
                 <item.icon size={13} className={`mr-1.5 transition-transform group-hover:scale-110 ${isActive(item.path) ? 'text-blue-300' : 'text-gray-400'}`} />
                 <span className="hidden lg:inline">{item.label}</span>
@@ -80,11 +78,10 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-3 rounded-xl text-sm font-black flex items-center space-x-3 transition-all ${
-                  isActive(item.path)
-                    ? 'bg-[#003366] text-white'
-                    : 'text-gray-600 hover:bg-blue-50 hover:text-[#003366]'
-                }`}
+                className={`px-4 py-3 rounded-xl text-sm font-black flex items-center space-x-3 transition-all ${isActive(item.path)
+                  ? 'bg-[#003366] text-white'
+                  : 'text-gray-600 hover:bg-blue-50 hover:text-[#003366]'
+                  }`}
               >
                 <item.icon size={16} className={isActive(item.path) ? 'text-blue-300' : 'text-gray-400'} />
                 <span>{item.label}</span>

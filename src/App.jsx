@@ -6,7 +6,7 @@ import { dbService } from './services/dbService';
 // Lazy load pages for performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const PredictForm = lazy(() => import('./pages/PredictForm'));
-const PredictManual = lazy(() => import('./pages/PredictManual'));
+const Predictprecision = lazy(() => import('./pages/Predictprecision'));
 const PredictResult = lazy(() => import('./pages/PredictResult'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DecisionTree = lazy(() => import('./pages/DecisionTree'));
@@ -34,7 +34,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/predict" element={<PredictForm />} />
-            <Route path="/predict-manual" element={<PredictManual />} />
+            <Route path="/predict-precision" element={<Predictprecision />} />
             <Route path="/result/:id" element={<PredictResult />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tree" element={<DecisionTree />} />
