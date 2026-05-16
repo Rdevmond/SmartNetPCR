@@ -5,7 +5,7 @@ export const BUILDING_CATEGORIES = {
     'Kantin', 
     'Masjid', 
     'Perpustakaan', 
-    'Area Parkir', 
+    'Area Parkir/Lapangan', 
     'GOR', 
     'Amphi Teater Dalam', 
     'Workshop Mesin', 

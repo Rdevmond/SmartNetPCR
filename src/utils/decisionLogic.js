@@ -15,7 +15,7 @@
 export const ACTIVITIES = {
   "browsing": { demand: 1.5, label: "Browsing Umum" },
   "streaming": { demand: 4.5, label: "Streaming Video" },
-  "meeting": { demand: 4, label: "Video Conference/Meeting" },
+  "meeting": { demand: 4, label: "OnlineMeeting" },
   "social": { demand: 2, label: "Social Media" },
   "gaming": { demand: 2.5, label: "Online Gaming" },
   "download": { demand: 8, label: "Download File Besar" }
