@@ -173,10 +173,6 @@ const LandingPage = () => {
                         </div>
                         <h3 className="text-xl md:text-2xl font-black text-[#003366] mb-3 md:mb-4">{f.title}</h3>
                         <p className="text-gray-500 leading-relaxed font-medium text-sm md:text-base">{f.desc}</p>
-                        <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-50 flex items-center justify-between">
-                           <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${f.iconColor}`}>Core Engine</span>
-                           <ArrowRight className={`${f.iconColor} w-4 h-4 group-hover:translate-x-2 transition-transform`} />
-                        </div>
                      </div>
                   ))}
                </div>
