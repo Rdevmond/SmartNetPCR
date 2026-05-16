@@ -26,35 +26,35 @@ const DecisionTree = () => {
   const rules = [
     {
       id: 0,
-      condition: "Skor ≤ −0.5",
+      condition: "Skor ≤ 0",
       result: "Sangat Buruk",
       color: "#ef4444",
       bgLight: "bg-red-50",
       border: "border-red-200",
       badge: "bg-red-500",
-      desc: "Gangguan parah. Kecepatan jauh di bawah kebutuhan aktivitas. Butuh tindakan segera.",
+      desc: "Gangguan parah. Kecepatan tidak memadai untuk mendukung aktivitas yang dipilih.",
       icon: XCircle
     },
     {
       id: 1,
-      condition: "Skor ≤ 1.5",
+      condition: "Skor ≤ 2.0 OR Surplus < 0",
       result: "Buruk",
       color: "#f97316",
       bgLight: "bg-orange-50",
       border: "border-orange-200",
       badge: "bg-orange-500",
-      desc: "Performa lemah. Keluhan pengguna sangat mempengaruhi kualitas pengalaman berinternet.",
+      desc: "Performa lemah. Kecepatan berada di bawah ambang batas kebutuhan minimum aktivitas.",
       icon: XCircle
     },
     {
       id: 2,
-      condition: "Skor ≤ 2.5",
+      condition: "Skor ≤ 3.0",
       result: "Cukup",
       color: "#eab308",
       bgLight: "bg-yellow-50",
       border: "border-yellow-200",
       badge: "bg-yellow-500",
-      desc: "Batas minimum. Masih bisa digunakan namun risiko buffering atau lag masih ada.",
+      desc: "Batas minimum. Masih bisa digunakan namun risiko lag atau gangguan sangat tinggi.",
       icon: CheckCircle
     },
     {
@@ -65,7 +65,7 @@ const DecisionTree = () => {
       bgLight: "bg-amber-50",
       border: "border-amber-200",
       badge: "bg-amber-600",
-      desc: "Bandwidth pas-pasan. Kapasitas hampir habis terserap oleh kebutuhan aktivitas.",
+      desc: "Bandwidth pas-pasan. Kapasitas sangat terbatas untuk aktivitas yang sedang berjalan.",
       icon: CheckCircle
     },
     {
@@ -76,7 +76,7 @@ const DecisionTree = () => {
       bgLight: "bg-green-50",
       border: "border-green-200",
       badge: "bg-green-500",
-      desc: "Kondisi optimal. Bandwidth mencukupi untuk semua jenis aktivitas internet.",
+      desc: "Kondisi optimal. Bandwidth sangat mencukupi untuk semua jenis aktivitas internet.",
       icon: CheckCircle
     }
   ];

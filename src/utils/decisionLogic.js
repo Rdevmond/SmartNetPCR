@@ -64,24 +64,24 @@ export const predictQuality = (mbps, activityKey, complaintKey) => {
     surplus
   };
 
-  if (skor <= -0.5) {
+  if (skor <= 0) {
     result.label = "Sangat Buruk";
     result.color = "#ef4444";
-    result.explanation = `Skor Anda (${skor.toFixed(2)}) menunjukkan gangguan parah. Kecepatan terdeteksi (${mbps} Mbps) jauh di bawah standar minimum untuk ${activity.label}.`;
+    result.explanation = `Skor Anda (${skor.toFixed(2)}) menunjukkan gangguan parah. Kecepatan (${mbps} Mbps) tidak memadai untuk ${activity.label}.`;
     result.recommendation = "Gunakan koneksi alternatif atau lapor ke BSTI PCR jika ini area publik.";
-  } else if (skor <= 1.5) {
+  } else if (skor <= 2.0 || surplus < 0) {
     result.label = "Buruk";
     result.color = "#f97316";
     const impactText = complaintKey === 'none' 
-      ? `Keterbatasan kecepatan (${mbps} Mbps) adalah faktor utama` 
-      : `Keluhan "${complaint.label}" serta kecepatan yang rendah`;
-    result.explanation = `Skor Anda (${skor.toFixed(2)}) tergolong buruk. ${impactText} sangat mempengaruhi pengalaman ${activity.label}.`;
+      ? `Keterbatasan kecepatan (${mbps} Mbps)` 
+      : `Keluhan "${complaint.label}"`;
+    result.explanation = `Skor Anda (${skor.toFixed(2)}) tergolong buruk untuk ${activity.label}. ${impactText} menjadi hambatan utama.`;
     result.recommendation = "Coba pindah ke area dengan sinyal lebih kuat (Gedung Utama/Perpustakaan).";
-  } else if (skor <= 2.5 || surplus <= 0.5) {
+  } else if (skor <= 3.0 || surplus <= 0.5) {
     result.label = "Cukup";
     result.color = "#eab308";
-    result.explanation = `Koneksi Anda cukup, namun pas-pasan (Skala: ${speedRank}/5). Risiko buffering pada ${activity.label} masih ada.`;
-    result.recommendation = "Tutup aplikasi latar belakang yang menggunakan data internet.";
+    result.explanation = `Koneksi Anda cukup, namun sangat terbatas (Skala: ${speedRank}/5). Risiko lag pada ${activity.label} sangat tinggi.`;
+    result.recommendation = "Tutup aplikasi lain yang sedang berjalan untuk menghemat bandwidth.";
   } else {
     result.label = "Baik";
     result.color = "#22c55e";
