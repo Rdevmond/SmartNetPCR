@@ -1,159 +1,250 @@
-import React from 'react';
-import { GitBranch, Box, Calculator, Info, ChevronRight, Cpu, Network, Zap, Target } from 'lucide-react';
+import React, { useState } from 'react';
+import { GitBranch, Box, Calculator, ChevronRight, Cpu, Network, Zap, Target, ArrowDown, CheckCircle, XCircle, Info, Sparkles } from 'lucide-react';
 
 const DecisionTree = () => {
-  const steps = [
+  const [activeRule, setActiveRule] = useState(null);
+
+  const formulas = [
     {
-      title: "Input Acquisition",
-      icon: Box,
-      desc: "Menangkap 3 parameter krusial: Bandwidth (Mbps), Tipe Aktivitas, dan Keluhan Subjektif.",
-      color: "bg-blue-500",
-      shadow: "shadow-blue-500/20"
+      title: "Main Score",
+      formula: "Skor = Kec + Keluhan − Gap",
+      desc: "Variabel Gap dihitung dinamis dari selisih kebutuhan aktivitas (Demand) dengan bandwidth real-time.",
+      accent: "#FFD700",
+      icon: Zap,
+      bg: "from-[#003366] to-blue-900"
     },
     {
-      title: "Metric Calculation",
-      icon: Calculator,
-      desc: "Pemrosesan variabel Skor (Kec + Keluhan - Gap) dan Surplus (Kec - Demand).",
-      color: "bg-purple-500",
-      shadow: "shadow-purple-500/20"
-    },
-    {
-      title: "Rule Induction",
-      icon: GitBranch,
-      desc: "Pengecekan ambang batas threshold dinamis untuk penentuan label akhir.",
-      color: "bg-[#003366]",
-      shadow: "shadow-blue-900/20"
+      title: "Surplus Metric",
+      formula: "Surplus = Kec − Demand",
+      desc: "Menentukan ketersediaan bandwidth sisa. Nilai kritis adalah ≤ 0.5 untuk aktivitas berat.",
+      accent: "#60a5fa",
+      icon: Target,
+      bg: "from-blue-900 to-purple-900"
     }
   ];
 
   const rules = [
-    { condition: "Skor ≤ -0.5", result: "Sangat Buruk", color: "bg-red-500", desc: "Gangguan Parah" },
-    { condition: "Skor ≤ 1.5", result: "Buruk", color: "bg-orange-500", desc: "Performa Lemah" },
-    { condition: "Skor ≤ 2.5", result: "Cukup", color: "bg-yellow-500", desc: "Batas Minimum" },
-    { condition: "Surplus ≤ 0.5", result: "Cukup", color: "bg-yellow-600", desc: "Pas-pasan" },
-    { condition: "Lainnya", result: "Baik", color: "bg-emerald-500", desc: "Optimal" }
+    {
+      id: 0,
+      condition: "Skor ≤ −0.5",
+      result: "Sangat Buruk",
+      color: "#ef4444",
+      bgLight: "bg-red-50",
+      border: "border-red-200",
+      badge: "bg-red-500",
+      desc: "Gangguan parah. Kecepatan jauh di bawah kebutuhan aktivitas. Butuh tindakan segera.",
+      icon: XCircle
+    },
+    {
+      id: 1,
+      condition: "Skor ≤ 1.5",
+      result: "Buruk",
+      color: "#f97316",
+      bgLight: "bg-orange-50",
+      border: "border-orange-200",
+      badge: "bg-orange-500",
+      desc: "Performa lemah. Keluhan pengguna sangat mempengaruhi kualitas pengalaman berinternet.",
+      icon: XCircle
+    },
+    {
+      id: 2,
+      condition: "Skor ≤ 2.5",
+      result: "Cukup",
+      color: "#eab308",
+      bgLight: "bg-yellow-50",
+      border: "border-yellow-200",
+      badge: "bg-yellow-500",
+      desc: "Batas minimum. Masih bisa digunakan namun risiko buffering atau lag masih ada.",
+      icon: CheckCircle
+    },
+    {
+      id: 3,
+      condition: "Surplus ≤ 0.5",
+      result: "Cukup",
+      color: "#ca8a04",
+      bgLight: "bg-amber-50",
+      border: "border-amber-200",
+      badge: "bg-amber-600",
+      desc: "Bandwidth pas-pasan. Kapasitas hampir habis terserap oleh kebutuhan aktivitas.",
+      icon: CheckCircle
+    },
+    {
+      id: 4,
+      condition: "Lainnya",
+      result: "Baik",
+      color: "#22c55e",
+      bgLight: "bg-green-50",
+      border: "border-green-200",
+      badge: "bg-green-500",
+      desc: "Kondisi optimal. Bandwidth mencukupi untuk semua jenis aktivitas internet.",
+      icon: CheckCircle
+    }
+  ];
+
+  const inputs = [
+    { label: "Bandwidth", unit: "Mbps", desc: "Kecepatan internet terukur", color: "text-blue-500", bg: "bg-blue-50" },
+    { label: "Aktivitas", unit: "Tipe", desc: "Jenis penggunaan internet", color: "text-purple-500", bg: "bg-purple-50" },
+    { label: "Keluhan", unit: "Level", desc: "Gangguan yang dirasakan user", color: "text-orange-500", bg: "bg-orange-50" },
   ];
 
   return (
-    <div className="bg-mesh min-h-screen pt-32 pb-20">
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Header Section */}
-        <div className="text-center mb-24 animate-slide-up">
-          <div className="inline-flex items-center px-4 py-2 rounded-2xl bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.3em] border border-blue-100 mb-8">
-             Algorithm Architecture
+    <div className="bg-mesh min-h-screen pt-24 md:pt-32 pb-20">
+      <div className="max-w-5xl mx-auto px-4 md:px-6">
+
+        {/* Header */}
+        <div className="text-center mb-16 md:mb-24 animate-slide-up">
+          <div className="inline-flex items-center px-4 py-2 rounded-2xl bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.3em] border border-blue-100 mb-6">
+            <Sparkles size={12} className="mr-2" />
+            Algorithm Architecture
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-8 tracking-tight">Logika <span className="text-gradient">Pohon Keputusan</span></h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed">
+          <h1 className="text-4xl md:text-6xl font-black text-[#003366] mb-6 tracking-tight">
+            Logika <span className="text-gradient">Pohon Keputusan</span>
+          </h1>
+          <p className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed">
             Eksplorasi mendalam bagaimana mesin NetCheck PCR melakukan klasifikasi kualitas jaringan menggunakan pendekatan rule-based yang dioptimalkan.
           </p>
         </div>
 
-        {/* Formula Section */}
-        <div className="glass-dark p-12 md:p-16 rounded-[3rem] shadow-2xl mb-24 relative overflow-hidden group">
-          {/* Animated Background Icons */}
-          <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:rotate-12 transition-transform duration-700">
-            <Cpu size={250} />
-          </div>
-          <div className="absolute bottom-0 left-0 p-12 opacity-5 group-hover:-rotate-12 transition-transform duration-700">
-            <Network size={200} />
-          </div>
-
-          <h3 className="text-2xl font-black text-white mb-12 flex items-center">
-            <Calculator className="mr-4 text-[#FFD700] w-8 h-8" />
-            Core Mathematical Foundation
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
-            <div className="glass-card bg-white/5 border-white/10 p-10 rounded-[2rem] backdrop-blur-xl group hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between mb-6">
-                 <p className="text-[#FFD700] text-xs font-black uppercase tracking-widest">Main Score</p>
-                 <Zap size={16} className="text-[#FFD700]" />
-              </div>
-              <p className="text-3xl md:text-4xl font-mono font-black text-white tracking-tighter">Skor = Kec + Keluhan − Gap</p>
-              <div className="mt-8 pt-8 border-t border-white/5">
-                 <p className="text-xs text-gray-400 font-medium leading-relaxed">Variabel Gap dihitung secara dinamis berdasarkan selisih kebutuhan aktivitas (Demand) dengan bandwidth real-time.</p>
-              </div>
-            </div>
-
-            <div className="glass-card bg-white/5 border-white/10 p-10 rounded-[2rem] backdrop-blur-xl group hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between mb-6">
-                 <p className="text-blue-400 text-xs font-black uppercase tracking-widest">Surplus Metric</p>
-                 <Target size={16} className="text-blue-400" />
-              </div>
-              <p className="text-3xl md:text-4xl font-mono font-black text-white tracking-tighter">Surplus = Kec − Demand</p>
-              <div className="mt-8 pt-8 border-t border-white/5">
-                 <p className="text-xs text-gray-400 font-medium leading-relaxed">Menentukan ketersediaan bandwidth sisa. Nilai kritis adalah ≤ 0.5 Mbps untuk aktivitas berat.</p>
-              </div>
+        {/* === STEP 1: INPUT === */}
+        <div className="mb-6 animate-fade-in">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-black text-lg shadow-lg shadow-blue-500/30">1</div>
+            <div>
+              <h2 className="text-xl font-black text-[#003366]">Input Acquisition</h2>
+              <p className="text-sm text-gray-400 font-medium">3 parameter yang ditangkap dari pengguna</p>
             </div>
           </div>
-        </div>
-
-        {/* Workflow Visualization */}
-        <div className="mb-32">
-          <h3 className="text-3xl font-black text-center text-[#003366] mb-16 tracking-tight">System Workflow Architecture</h3>
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-12 relative">
-            {/* Connection Line (Desktop) */}
-            <div className="hidden md:block absolute top-12 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-100 via-purple-100 to-[#003366] opacity-30 -z-10"></div>
-            
-            {steps.map((step, i) => (
-              <React.Fragment key={i}>
-                <div className="flex-1 text-center group">
-                  <div className={`w-24 h-24 ${step.color} text-white rounded-[2rem] ${step.shadow} flex items-center justify-center mx-auto mb-8 transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-2xl`}>
-                    <step.icon size={40} />
-                  </div>
-                  <h4 className="text-2xl font-black text-[#003366] mb-4">{step.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed font-medium px-4">{step.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {inputs.map((inp, i) => (
+              <div key={i} className="glass-card p-6 rounded-3xl border-white/50 hover-lift group">
+                <div className={`inline-flex px-3 py-1 ${inp.bg} ${inp.color} rounded-xl text-[10px] font-black uppercase tracking-widest mb-4`}>
+                  {inp.unit}
                 </div>
-                {i < steps.length - 1 && (
-                  <div className="md:hidden">
-                    <ChevronRight className="text-gray-300 w-8 h-8 rotate-90" />
-                  </div>
-                )}
-              </React.Fragment>
+                <h3 className={`text-2xl font-black ${inp.color} mb-1`}>{inp.label}</h3>
+                <p className="text-xs text-gray-400 font-medium">{inp.desc}</p>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Decision Rules Grid */}
-        <div className="glass-card p-12 md:p-16 rounded-[3rem] border-white/50 shadow-2xl relative overflow-hidden animate-fade-in">
-          <div className="absolute top-0 right-0 p-8 opacity-5">
-            <GitBranch size={100} />
+        {/* Arrow */}
+        <div className="flex justify-center my-4">
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-px h-8 bg-gradient-to-b from-blue-200 to-purple-300"></div>
+            <ArrowDown size={20} className="text-purple-400" />
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
-            <h3 className="text-3xl font-black text-[#003366] flex items-center tracking-tight">
-              <GitBranch className="mr-4 text-blue-500" />
-              Decision Induction Table
-            </h3>
-            <div className="px-4 py-2 bg-gray-50 rounded-xl text-xs font-black text-gray-400 uppercase tracking-widest">
-               Rule-Based Engine v1.0
+        </div>
+
+        {/* === STEP 2: FORMULA === */}
+        <div className="mb-6 animate-fade-in delay-200">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-black text-lg shadow-lg shadow-purple-500/30">2</div>
+            <div>
+              <h2 className="text-xl font-black text-[#003366]">Metric Calculation</h2>
+              <p className="text-sm text-gray-400 font-medium">Pemrosesan variabel berdasarkan formula matematika</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {rules.map((rule, i) => (
-              <div key={i} className="group p-8 rounded-[2rem] bg-gray-50/50 flex flex-col items-center text-center border border-gray-100 hover:bg-white hover:shadow-xl hover:border-blue-100 transition-all duration-500">
-                <span className="text-[10px] font-black text-gray-300 uppercase mb-6 tracking-widest group-hover:text-blue-400 transition-colors">IF {rule.condition}</span>
-                <div className={`w-full py-4 ${rule.color} text-white rounded-2xl font-black text-sm shadow-xl shadow-gray-200 mb-4 tracking-tight group-hover:scale-105 transition-transform`}>
-                  {rule.result}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {formulas.map((f, i) => (
+              <div key={i} className={`bg-gradient-to-br ${f.bg} p-8 md:p-10 rounded-3xl relative overflow-hidden group`}>
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <f.icon size={120} color="white" />
                 </div>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{rule.desc}</span>
+                <div className="relative z-10">
+                  <p style={{ color: f.accent }} className="text-[10px] font-black uppercase tracking-[0.3em] mb-4">{f.title}</p>
+                  <p className="text-2xl md:text-3xl font-mono font-black text-white tracking-tight mb-4 leading-snug">{f.formula}</p>
+                  <div className="pt-4 border-t border-white/10">
+                    <p className="text-xs text-gray-400 font-medium leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="mt-16 p-8 bg-blue-50/50 rounded-[2rem] border border-blue-100 flex items-start space-x-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-               <Info size={60} className="text-blue-500" />
+        {/* Arrow */}
+        <div className="flex justify-center my-4">
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-px h-8 bg-gradient-to-b from-purple-300 to-[#003366]/40"></div>
+            <ArrowDown size={20} className="text-[#003366]/60" />
+          </div>
+        </div>
+
+        {/* === STEP 3: RULES === */}
+        <div className="mb-12 animate-fade-in delay-300">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-[#003366] text-white flex items-center justify-center font-black text-lg shadow-lg shadow-blue-900/30">3</div>
+            <div>
+              <h2 className="text-xl font-black text-[#003366]">Rule Induction</h2>
+              <p className="text-sm text-gray-400 font-medium">Klik setiap aturan untuk melihat detail</p>
             </div>
-            <Info className="text-blue-500 shrink-0 mt-1" />
-            <div className="relative z-10">
-               <p className="text-sm font-black text-blue-900 mb-2 uppercase tracking-widest">Interpretabilitas Model</p>
-               <p className="text-sm text-blue-800 leading-relaxed font-medium">
-                 Model ini dirancang untuk memiliki interpretabilitas tinggi. Setiap keputusan yang diambil oleh sistem dapat dilacak kembali ke formula matematika dan parameter input yang diberikan oleh pengguna, memastikan transparansi penuh dalam proses klasifikasi.
-               </p>
+          </div>
+
+          <div className="glass-card rounded-3xl p-6 md:p-8 border-white/50 shadow-xl">
+            {/* Flow visual */}
+            <div className="relative">
+              {rules.map((rule, i) => (
+                <div key={rule.id}>
+                  <div
+                    onClick={() => setActiveRule(activeRule === rule.id ? null : rule.id)}
+                    className={`cursor-pointer rounded-2xl border-2 transition-all duration-300 ${
+                      activeRule === rule.id ? `${rule.border} ${rule.bgLight} shadow-lg` : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between p-5">
+                      <div className="flex items-center gap-4">
+                        {/* IF badge */}
+                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest hidden sm:block">IF</span>
+                        {/* Condition */}
+                        <div className="px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                          <span className="font-mono font-black text-sm text-[#003366]">{rule.condition}</span>
+                        </div>
+                        {/* Arrow */}
+                        <ChevronRight size={16} className="text-gray-300" />
+                        {/* Result badge */}
+                        <div className={`px-4 py-2 ${rule.badge} rounded-xl shadow-sm`}>
+                          <span className="font-black text-sm text-white tracking-tight">{rule.result}</span>
+                        </div>
+                      </div>
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${activeRule === rule.id ? rule.bgLight : 'bg-gray-50'}`}>
+                        <rule.icon size={16} style={{ color: rule.color }} />
+                      </div>
+                    </div>
+                    {/* Expanded detail */}
+                    {activeRule === rule.id && (
+                      <div className={`px-5 pb-5 border-t ${rule.border}`}>
+                        <p className="text-sm text-gray-600 font-medium leading-relaxed pt-4">{rule.desc}</p>
+                      </div>
+                    )}
+                  </div>
+                  {/* Connector line between rules */}
+                  {i < rules.length - 1 && (
+                    <div className="flex items-center gap-3 py-2 pl-5">
+                      <div className="w-px h-4 bg-gray-100 ml-[26px] sm:ml-[46px]"></div>
+                      <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">ELSE</span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Info Note */}
+        <div className="glass-card p-6 md:p-8 rounded-3xl border-white/50 animate-fade-in delay-500">
+          <div className="flex items-start gap-5">
+            <div className="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-blue-500/20">
+              <Info size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-black text-[#003366] mb-2 uppercase tracking-widest">Interpretabilitas Model</p>
+              <p className="text-sm text-gray-500 leading-relaxed font-medium">
+                Model ini dirancang untuk memiliki interpretabilitas tinggi. Setiap keputusan yang diambil oleh sistem dapat dilacak kembali ke formula matematika dan parameter input yang diberikan oleh pengguna, memastikan transparansi penuh dalam proses klasifikasi.
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

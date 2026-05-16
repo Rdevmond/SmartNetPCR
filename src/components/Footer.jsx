@@ -65,10 +65,7 @@ const Footer = () => {
                 <Mail className="w-5 h-5 text-blue-500 shrink-0" />
                 <span>info@pcr.ac.id</span>
               </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-blue-500 shrink-0" />
-                <span>(0761) 53939</span>
-              </li>
+
             </ul>
           </div>
         </div>
