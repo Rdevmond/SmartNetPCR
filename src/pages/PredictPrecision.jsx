@@ -57,7 +57,7 @@ const Predictprecision = () => {
               <input
                 type="text"
                 required
-                placeholder="Contoh: Raymond Ganteng"
+                placeholder="Contoh: Raymond gacor 24 ti bf"
                 className="w-full px-5 py-4 md:px-6 md:py-5 bg-white/50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-bold text-gray-800"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
